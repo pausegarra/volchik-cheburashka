@@ -1,0 +1,36 @@
+---
+interface Props {
+  currentLocale: 'es' | 'ru';
+}
+
+const { currentLocale } = Astro.props;
+const locales: Array<{ code: 'es' | 'ru'; label: string; href: string }> = [
+  { code: 'es', label: 'ES', href: '/es' },
+  { code: 'ru', label: 'RU', href: '/ru' },
+];
+---
+
+<nav aria-label="Selector de idioma" class="pointer-events-auto absolute right-3 top-3 z-20 sm:right-6 sm:top-5">
+  <ul class="flex items-center gap-2 rounded-full border border-[#d8d1c1] bg-[#f6f4ef]/88 px-2 py-1 backdrop-blur-sm">
+    {locales.map((locale) => {
+      const isActive = locale.code === currentLocale;
+      return (
+        <li>
+          <a
+            href={locale.href}
+            hreflang={locale.code}
+            aria-current={isActive ? 'page' : undefined}
+            class:list={[
+              'rounded-full px-3 py-1 text-xs font-semibold tracking-wide transition-colors sm:text-sm',
+              isActive
+                ? 'bg-[#1f2f49] text-[#f6f4ef]'
+                : 'text-[#1f2f49] hover:bg-[#1f2f49]/10',
+            ]}
+          >
+            {locale.label}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</nav>

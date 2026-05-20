@@ -1,0 +1,81 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('imagenes_ru');
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const esEntries = await getCollection('imagenes_es');
+const hasEsVersion = esEntries.some((item) => item.id === entry.id);
+
+function buildDescription(markdown: string) {
+  return markdown
+    .replace(/[#>*_`~\-]/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 160);
+}
+
+const description = buildDescription(entry.body);
+const canonical = `https://volchikcheburashka.com/ru/imagenes/${entry.id}`;
+const alternates = [
+  ...(hasEsVersion
+    ? [{ lang: 'es', href: `https://volchikcheburashka.com/es/imagenes/${entry.id}` }]
+    : []),
+  { lang: 'ru', href: canonical },
+  { lang: 'x-default', href: 'https://volchikcheburashka.com/es' },
+];
+---
+
+<Layout
+  title={entry.data.title}
+  description={description}
+  lang="ru"
+  canonical={canonical}
+  ogImage={entry.data.image.src}
+  ogType="article"
+  alternates={alternates}
+>
+  <main class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+    <a href="/ru" class="mb-6 inline-block text-sm font-medium text-[#556074] hover:text-[#1f2f49]">← Назад</a>
+
+    <section class="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr] lg:gap-10">
+      <figure class="overflow-hidden rounded-2xl">
+        <img
+          src={entry.data.image.src}
+          alt={entry.data.title}
+          class="h-auto w-full rounded-xl object-contain"
+          transition:name={`felicitacion-${entry.id}`}
+        />
+      </figure>
+
+      <article class="reading-article min-w-0">
+        <h1
+          class="reading-title text-3xl font-semibold text-[#1f2f49] sm:text-4xl"
+          transition:name={`felicitacion-titulo-${entry.id}`}
+        >
+          {entry.data.title}
+        </h1>
+        <time class="reading-time mt-3 block font-medium uppercase">
+          {entry.data.date.toLocaleDateString('ru-RU', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </time>
+
+        <div class="reading-content prose prose-stone mt-6 max-w-none text-[#5a341d] prose-headings:text-[#1f2f49]">
+          <Content />
+        </div>
+      </article>
+    </section>
+  </main>
+</Layout>

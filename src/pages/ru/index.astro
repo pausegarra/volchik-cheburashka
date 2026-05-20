@@ -1,0 +1,99 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import LanguageSwitcher from '../../components/LanguageSwitcher.astro';
+import { getCollection } from 'astro:content';
+import { translations } from '../../i18n/translations';
+
+const t = translations.ru;
+const ruEntries = await getCollection('imagenes_ru');
+const esEntries = await getCollection('imagenes_es');
+const sourceLocale = ruEntries.length > 0 ? 'ru' : 'es';
+const felicitaciones = (sourceLocale === 'ru' ? ruEntries : esEntries).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+---
+
+<Layout
+  title={t.title}
+  description={t.seoDescriptionHome}
+  lang="ru"
+  canonical="https://volchikcheburashka.com/ru"
+  ogImage="/hero.webp"
+  alternates={[
+    { lang: 'es', href: 'https://volchikcheburashka.com/es' },
+    { lang: 'ru', href: 'https://volchikcheburashka.com/ru' },
+    { lang: 'x-default', href: 'https://volchikcheburashka.com/es' },
+  ]}
+>
+  <main class="pb-12 overflow-hidden">
+    <section class="relative left-1/2 mb-8 w-screen -translate-x-1/2 sm:mb-10">
+      <div class="relative h-[520px] overflow-hidden sm:h-[680px] md:h-[820px] lg:h-[980px]">
+        <LanguageSwitcher currentLocale="ru" />
+        <img
+          src="/hero.webp"
+          alt={t.heroAlt}
+          class="absolute left-1/2 top-0 h-full w-auto min-w-full max-w-none -translate-x-1/2 object-cover object-center"
+          loading="eager"
+        />
+
+        <div
+          class="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-20 bg-gradient-to-b from-transparent to-[#f6f4ef] sm:h-24 lg:h-28"
+          aria-hidden="true"
+        ></div>
+      </div>
+
+      <div class="pointer-events-none absolute inset-x-0 top-6 z-10 mx-auto flex w-full max-w-[760px] flex-col items-center gap-2 px-4 sm:top-10 sm:gap-3 md:top-14 md:gap-4 lg:top-20 lg:gap-5">
+        <img
+          src="/logo-ru.webp"
+          alt={t.logoAlt}
+          class="h-auto w-[clamp(150px,60vw,300px)] sm:w-[clamp(170px,52vw,330px)] md:w-[clamp(200px,46vw,380px)] lg:w-[51%] lg:max-w-[644px]"
+          loading="eager"
+        />
+        <p class="max-w-[680px] px-2 text-center text-[clamp(0.78rem,3.1vw,1rem)] font-medium leading-snug text-[#1f2f49] sm:text-[clamp(0.86rem,2.5vw,1.05rem)] md:text-[clamp(0.92rem,2vw,1.1rem)]">
+          {t.subtitle}
+        </p>
+      </div>
+    </section>
+
+    <section class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
+      {felicitaciones.length === 0 ? (
+        <p class="rounded-xl bg-white/70 p-4 text-sm text-[#5a341d]">Пока нет поздравлений.</p>
+      ) : (
+        <ul class="space-y-4">
+          {felicitaciones.map((item) => (
+            <li class="group">
+              <a href={`/${sourceLocale}/imagenes/${item.id}`} class="block">
+                <article class="flex items-start gap-4 py-2 sm:gap-5">
+                  <div class="h-24 w-24 shrink-0 overflow-hidden sm:h-28 sm:w-28">
+                    <img
+                      src={item.data.image.src}
+                      alt={item.data.title}
+                      class="h-full w-full rounded-md object-cover"
+                      transition:name={`felicitacion-${item.id}`}
+                    />
+                  </div>
+
+                  <div class="min-w-0 flex-1 pt-1">
+                    <h3
+                      class="truncate text-lg font-semibold text-[#1f2f49]"
+                      transition:name={`felicitacion-titulo-${item.id}`}
+                    >
+                      {item.data.title}
+                    </h3>
+                    <time class="mt-1 block text-xs font-medium uppercase tracking-wide text-[#556074] sm:text-[11px]">
+                      {item.data.date.toLocaleDateString('ru-RU', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </time>
+                  </div>
+                </article>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  </main>
+</Layout>
