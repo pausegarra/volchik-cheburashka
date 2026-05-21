@@ -72,6 +72,17 @@ const alternates = [
           })}
         </time>
 
+        <div class="mt-6">
+          <a
+            href={entry.data.image.src}
+            download={`${entry.id}.webp`}
+            class="inline-flex items-center gap-2 rounded-full border border-[#d8d1c1] bg-[#f6f4ef] px-4 py-2 text-sm font-semibold text-[#1f2f49] transition-colors hover:bg-[#1f2f49] hover:text-[#f6f4ef]"
+            aria-label={`Descargar imagen ${entry.data.title}`}
+          >
+            Descargar imagen
+          </a>
+        </div>
+
         <div class="reading-content prose prose-stone mt-6 max-w-none text-[#5a341d] prose-headings:text-[#1f2f49]">
           <Content />
         </div>
