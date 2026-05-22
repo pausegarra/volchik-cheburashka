@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import LanguageSwitcher from '../../components/LanguageSwitcher.astro';
+import CharactersSection from '../../components/CharactersSection.astro';
 import { getCollection } from 'astro:content';
 import { translations } from '../../i18n/translations';
 
@@ -54,6 +55,24 @@ const felicitaciones = (sourceLocale === 'ru' ? ruEntries : esEntries).sort(
         </p>
       </div>
     </section>
+
+    <CharactersSection
+      title={t.charactersSection.title}
+      characters={[
+        {
+          name: t.charactersSection.cheburashka.name,
+          description: t.charactersSection.cheburashka.description,
+          imageSrc: '/cheburashka.webp',
+          imageAlt: t.charactersSection.cheburashka.name,
+        },
+        {
+          name: t.charactersSection.volchik.name,
+          description: t.charactersSection.volchik.description,
+          imageSrc: '/volchik.webp',
+          imageAlt: t.charactersSection.volchik.name,
+        },
+      ]}
+    />
 
     <section class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
       {felicitaciones.length === 0 ? (
