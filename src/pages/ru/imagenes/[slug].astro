@@ -24,7 +24,7 @@ function buildDescription(markdown: string) {
     .slice(0, 160);
 }
 
-const description = buildDescription(entry.body);
+const description = buildDescription(entry.body ?? '');
 const canonical = `https://volchikcheburashka.com/ru/imagenes/${entry.id}`;
 const alternates = [
   ...(hasEsVersion
